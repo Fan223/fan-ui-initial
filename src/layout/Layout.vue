@@ -9,6 +9,7 @@
       :modal="false"
       :show-close="false"
       direction="ttb"
+      :lock-scroll="false"
     >
       <template #header>
         <Header style="color: var(--text-bright)" />
