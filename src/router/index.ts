@@ -252,15 +252,22 @@ const menus = [
   },
 ];
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to) => {
   const { isRoute, topMenu, asideMenu } = storeToRefs(useNavMenuStore());
 
+  if (!localStorage.getItem('token')) {
+    await login();
+  }
+
   if (!isRoute.value) {
-    menus.forEach((menu: Menu) => {
+    await menus.forEach((menu: Menu) => {
       bindRoute(menu);
     });
     isRoute.value = true;
-    next(to.path);
+
+    if (isRoute.value) {
+      return to.fullPath;
+    }
   } else {
     router.isReady().then(() => {
       let id = to.name as string;
@@ -274,8 +281,11 @@ router.beforeEach((to, _from, next) => {
         asideMenu.value.drawer = false;
       }
     });
-    next();
   }
 });
+
+async function login() {
+  await localStorage.setItem('token', 'common');
+}
 
 export default router;
